@@ -13,18 +13,23 @@ import java.util.Optional;
 public class AuthService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private JWTService jwtService;
 
     AuthService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public boolean authenticate(LoginDto dto) {
+    public String authenticate(LoginDto dto) {
         Optional<User> opUser = userRepository.findByUsername(dto.getUsername());
         if (opUser.isPresent()) {
             User user = opUser.get();
             boolean status = BCrypt.checkpw(dto.getPassword(), user.getPassword());
-            return status;
+            if (status) {
+                return jwtService.generateToken(user.getUsername());
+            }
+
         }
-        return false;
+        return null;
     }
 }

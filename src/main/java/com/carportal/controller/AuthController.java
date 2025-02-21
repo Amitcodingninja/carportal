@@ -55,9 +55,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> verifyLogin(@RequestBody LoginDto dto) {
-        boolean status = authService.authenticate(dto);
-        if (status) {
-            return new ResponseEntity<>("Verified", HttpStatus.OK);
+        String jwtToken = authService.authenticate(dto);
+        if (jwtToken != null) {
+            return new ResponseEntity<>(jwtToken, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Invalid", HttpStatus.OK);
         }
