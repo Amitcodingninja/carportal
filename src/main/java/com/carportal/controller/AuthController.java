@@ -25,7 +25,7 @@ public class AuthController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping
+    @PostMapping("/sign-up")
     public ResponseEntity<String> createUser(@RequestBody User user) {
 
         Optional<User> opEmail = userRepository.findByEmail(user.getEmail());
