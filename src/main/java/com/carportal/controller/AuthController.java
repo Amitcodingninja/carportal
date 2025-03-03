@@ -25,7 +25,7 @@ public class AuthController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/sign-up")
+    @PostMapping("/user/sign-up")
     public ResponseEntity<String> createUser(@RequestBody User user) {
 
         Optional<User> opEmail = userRepository.findByEmail(user.getEmail());
@@ -45,6 +45,36 @@ public class AuthController {
 
         String hashpw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(12));
         user.setPassword(hashpw);
+        user.setRole("ROLE_USER");
+
+        userRepository.save(user);
+
+        return new ResponseEntity<>("User Created", HttpStatus.CREATED);
+
+
+    }
+
+    @PostMapping("/owner/sign-up")
+    public ResponseEntity<String> createOwner(@RequestBody User user) {
+
+        Optional<User> opEmail = userRepository.findByEmail(user.getEmail());
+        if (opEmail.isPresent()) {
+            return new ResponseEntity<>("Email id exists", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        Optional<User> opMobile = userRepository.findByMobile(user.getMobile());
+        if (opMobile.isPresent()) {
+            return new ResponseEntity<>("Mobile Number exist", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        Optional<User> opUsername = userRepository.findByUsername(user.getUsername());
+        if (opUsername.isPresent()) {
+            return new ResponseEntity<>("Username exists", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        String hashpw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(12));
+        user.setPassword(hashpw);
+        user.setRole("ROLE_OWNER");
 
         userRepository.save(user);
 
